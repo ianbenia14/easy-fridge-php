@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Food extends Model
+class Product extends Model
 {
-    protected $table = 'food_table';
+    protected $table = 'products';
 
     protected $fillable = [
         'name',

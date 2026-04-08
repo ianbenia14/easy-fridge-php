@@ -16,8 +16,8 @@ class User extends Model
         'password',
     ];
 
-    public function geladeira()
+    public function fridge()
     {
-        return $this->hasOne(Geladeira::class);
+        return $this->hasOne(Fridge::class);
     }
 }

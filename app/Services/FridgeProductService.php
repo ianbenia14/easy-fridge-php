@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-use App\Models\GeladeiraProduct;
+use App\Models\FridgeProduct;
 
-class GeladeiraProductService
+class FridgeProductService
 {
     public function getAll(): array
     {
-        return GeladeiraProduct::all()->toArray();
+        return FridgeProduct::all()->toArray();
     }
 
-    public function getById(int $id): GeladeiraProduct
+    public function getById(int $id): FridgeProduct
     {
-        $item = GeladeiraProduct::find($id);
+        $item = FridgeProduct::find($id);
 
         if (!$item) {
             throw new \RuntimeException("Item não encontrado com o ID: $id");
@@ -22,19 +22,19 @@ class GeladeiraProductService
         return $item;
     }
 
-    public function save(array $data): GeladeiraProduct
+    public function save(array $data): FridgeProduct
     {
-        return GeladeiraProduct::create($data);
+        return FridgeProduct::create($data);
     }
 
-    public function update(int $id, array $data): GeladeiraProduct
+    public function update(int $id, array $data): FridgeProduct
     {
         $item = $this->getById($id);
         $item->update($data);
         return $item;
     }
 
-    public function partialUpdate(int $id, array $data): GeladeiraProduct
+    public function partialUpdate(int $id, array $data): FridgeProduct
     {
         $item = $this->getById($id);
         $item->update(array_filter($data));

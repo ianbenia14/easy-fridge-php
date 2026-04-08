@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Geladeira extends Model
+class Fridge extends Model
 {
     protected $fillable = ['user_id'];
 
@@ -13,8 +13,8 @@ class Geladeira extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function produtos()
+    public function products()
     {
-        return $this->hasMany(GeladeiraProduct::class);
+        return $this->hasMany(FridgeProduct::class);
     }
 }
