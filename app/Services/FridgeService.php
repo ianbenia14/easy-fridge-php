@@ -49,24 +49,27 @@ class FridgeService
     }
 
     public function addProduct(int $fridgeId, array $data): FridgeProduct
-    {
-        $fridge = $this->getById($fridgeId);
+{
+    $fridge = $this->getById($fridgeId);
 
-        $entry = FridgeProduct::create([
-            'fridge_id'  => $fridgeId,
-            'product_id' => $data['product_id'],
-            'quantity'   => $data['quantity'],
-        ]);
+    $entry = FridgeProduct::create([
+        'fridge_id'  => $fridgeId,
+        'product_id' => $data['product_id'],
+        'quantity'   => $data['quantity'],
+    ]);
 
+    try {
         $user = User::find($fridge->user_id);
-
         if ($user) {
             $product = $entry->product;
             Mail::to($user->email)->send(
                 new ProductRemovedMail($product->name, $data['quantity'])
             );
         }
-
-        return $entry;
+    } catch (\Exception $e) {
+        \Log::error('Erro ao enviar e-mail: ' . $e->getMessage());
     }
+
+    return $entry;
+}
 }

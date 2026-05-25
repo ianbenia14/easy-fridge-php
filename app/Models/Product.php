@@ -10,7 +10,7 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'quantidade',
-        'data_validade',
+        'quantity',
+        'expiration_date',
     ];
 }
