@@ -24,8 +24,8 @@ class ProductController extends Controller
     {
         $request->validate([
             'name'          => 'required|string',
-            'quantidade'    => 'required|integer|min:1',
-            'data_validade' => 'required|date',
+            'quantity'         => 'required|integer|min:1',
+            'expiration_date'  => 'required|date',
         ]);
 
         $product = $this->productService->save($request->all());

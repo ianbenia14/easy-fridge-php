@@ -50,7 +50,7 @@ class FridgeController extends Controller
     {
         $request->validate([
             'product_id' => 'required|integer|exists:products,id',
-            'quantidade' => 'required|integer|min:1',
+            'quantity' => 'required|integer|min:1',
         ]);
 
         $product = $this->fridgeService->addProduct($id, $request->all());

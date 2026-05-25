@@ -11,7 +11,7 @@ class FridgeProduct extends Model
     protected $fillable = [
         'fridge_id',
         'product_id',
-        'quantidade',
+        'quantity',
     ];
 
     public function fridge()

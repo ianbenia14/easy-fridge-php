@@ -15,6 +15,8 @@ class Fridge extends Model
 
     public function products()
     {
-        return $this->hasMany(FridgeProduct::class);
+        return $this->belongsToMany(Product::class, 'fridge_products')
+                    ->withPivot('quantity')
+                    ->withTimestamps();
     }
 }
