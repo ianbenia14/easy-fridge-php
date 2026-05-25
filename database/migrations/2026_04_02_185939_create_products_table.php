@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('quantidade');
-            $table->date('data_validade');
+            $table->integer('quantity');
+            $table->date('expiration_date');
             $table->timestamps();
         });
     }
