@@ -4,6 +4,9 @@ namespace App\Services;
 
 use App\Models\Fridge;
 use App\Models\FridgeProduct;
+use App\Models\User;
+use App\Mail\ProductRemovedMail;
+use Illuminate\Support\Facades\Mail;
 
 class FridgeService
 {
@@ -47,12 +50,23 @@ class FridgeService
 
     public function addProduct(int $fridgeId, array $data): FridgeProduct
     {
-        $this->getById($fridgeId);
+        $fridge = $this->getById($fridgeId);
 
-        return FridgeProduct::create([
+        $entry = FridgeProduct::create([
             'fridge_id'  => $fridgeId,
             'product_id' => $data['product_id'],
-            'quantidade' => $data['quantidade'],
+            'quantity'   => $data['quantity'],
         ]);
+
+        $user = User::find($fridge->user_id);
+
+        if ($user) {
+            $product = $entry->product;
+            Mail::to($user->email)->send(
+                new ProductRemovedMail($product->name, $data['quantity'])
+            );
+        }
+
+        return $entry;
     }
 }

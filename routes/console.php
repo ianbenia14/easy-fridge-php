@@ -1,8 +1,18 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Models\Product;
+use App\Models\User;
+use App\Mail\ExpiringProductsMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+Schedule::call(function () {
+    $expiring = Product::where('expiration_date', '<=', now()->addDays(3))
+                       ->get()->toArray();
+
+    if (!empty($expiring)) {
+        User::all()->each(fn($user) =>
+            Mail::to($user->email)->send(new ExpiringProductsMail($expiring))
+        );
+    }
+})->daily();
