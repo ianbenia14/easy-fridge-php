@@ -6,6 +6,7 @@ use App\Http\Controllers\FridgeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+<<<<<<< HEAD
 // Rotas publicas
 Route::post('login', [AuthController::class, 'login']);
 
@@ -32,3 +33,22 @@ Route::prefix('v1')->group(function () {
     });
 });
 );
+=======
+Route::post('login', [AuthController::class, 'login']);
+
+Route::prefix('v1')->group(function () {
+    Route::apiResource('users', UserController::class);
+    Route::apiResource('fridges', FridgeController::class);
+    Route::post('fridges/{id}/products', [FridgeController::class, 'addProduct']);
+    Route::get('fridges/{id}/products',  [FridgeController::class, 'products']);
+
+    Route::get('products',          [ProductController::class, 'index']);
+    Route::get('products/{id}',     [ProductController::class, 'show']);
+    Route::put('products/{id}',     [ProductController::class, 'update']);
+    Route::delete('products/{id}',  [ProductController::class, 'destroy']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('products', [ProductController::class, 'store']);
+    });
+});
+>>>>>>> 8d29fd5482700a7e1c275f86fce944dd4b94c509

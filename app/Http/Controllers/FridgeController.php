@@ -12,12 +12,17 @@ class FridgeController extends Controller
 
     public function index(): JsonResponse
     {
+<<<<<<< HEAD
         $userId = auth()->id();
         return response()->json($this->fridgeService->getAllByUserId($userId));
+=======
+        return response()->json($this->fridgeService->getAll());
+>>>>>>> 8d29fd5482700a7e1c275f86fce944dd4b94c509
     }
 
     public function show(int $id): JsonResponse
     {
+<<<<<<< HEAD
         // verifica se a geladeira realmente é do usuario logado, pra depois mostras os detalhes
         $fridge = $this->fridgeService->getByIdAndUser($id, auth()->id());
 
@@ -26,11 +31,15 @@ class FridgeController extends Controller
         }
 
         return response()->json($fridge);
+=======
+        return response()->json($this->fridgeService->getById($id));
+>>>>>>> 8d29fd5482700a7e1c275f86fce944dd4b94c509
     }
 
     public function store(Request $request): JsonResponse
     {
         $request->validate([
+<<<<<<< HEAD
             'name' => 'required|string|max:255', // pra poder dar nome a geladeira, Geladeira Cozinha, Geladeira Churrasco
         ]);
 
@@ -39,11 +48,18 @@ class FridgeController extends Controller
         $data['user_id'] = $request->user()->id;
 
         $fridge = $this->fridgeService->save($data);
+=======
+            'user_id' => 'required|integer|exists:users,id',
+        ]);
+
+        $fridge = $this->fridgeService->save($request->all());
+>>>>>>> 8d29fd5482700a7e1c275f86fce944dd4b94c509
         return response()->json($fridge, 201);
     }
 
     public function update(Request $request, int $id): JsonResponse
     {
+<<<<<<< HEAD
         // garante que o usuário só edite a própria geladeira
         $userId = auth()->id();
         $updatedFridge = $this->fridgeService->updateSecure($id, $userId, $request->all());
@@ -53,10 +69,14 @@ class FridgeController extends Controller
         }
 
         return response()->json($updatedFridge);
+=======
+        return response()->json($this->fridgeService->update($id, $request->all()));
+>>>>>>> 8d29fd5482700a7e1c275f86fce944dd4b94c509
     }
 
     public function destroy(int $id): JsonResponse
     {
+<<<<<<< HEAD
         // garante que o usuário só delete a própria geladeira
         $userId = auth()->id();
         $deleted = $this->fridgeService->deleteSecure($id, $userId);
@@ -65,11 +85,15 @@ class FridgeController extends Controller
             return response()->json(['message' => 'Operação não autorizada'], 403);
         }
 
+=======
+        $this->fridgeService->delete($id);
+>>>>>>> 8d29fd5482700a7e1c275f86fce944dd4b94c509
         return response()->json(null, 204);
     }
 
     public function products(int $id): JsonResponse
     {
+<<<<<<< HEAD
         // Só lista os produtos se a geladeira for do usuário logado
         $products = $this->fridgeService->getProductsSecure($id, auth()->id());
 
@@ -78,12 +102,16 @@ class FridgeController extends Controller
         }
 
         return response()->json($products);
+=======
+        return response()->json($this->fridgeService->getProducts($id));
+>>>>>>> 8d29fd5482700a7e1c275f86fce944dd4b94c509
     }
 
     public function addProduct(Request $request, int $id): JsonResponse
     {
         $request->validate([
             'product_id' => 'required|integer|exists:products,id',
+<<<<<<< HEAD
             'quantity'   => 'required|integer|min:1',
         ]);
 
@@ -96,6 +124,12 @@ class FridgeController extends Controller
             return response()->json(['message' => 'Não foi possível adicionar o item. Verifique as permissões da geladeira.'], 403);
         }
 
+=======
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $product = $this->fridgeService->addProduct($id, $request->all());
+>>>>>>> 8d29fd5482700a7e1c275f86fce944dd4b94c509
         return response()->json($product, 201);
     }
 }
