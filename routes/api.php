@@ -6,19 +6,18 @@ use App\Http\Controllers\FridgeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-<<<<<<< HEAD
-// Rotas publicas
+// Rotas 100% Públicas (Qualquer um acessa)
 Route::post('login', [AuthController::class, 'login']);
 
 Route::prefix('v1')->group(function () {
-    // Rotas de consulta pública
+    // Rotas de consulta pública (ex: ver o catálogo de produtos permitidos)
     Route::get('products',          [ProductController::class, 'index']);
     Route::get('products/{id}',     [ProductController::class, 'show']);
 
-    // Rotas protegidas pelo sanctum
+    // TODO O RESTO EXIGE LOGIN (Protegido pelo Sanctum)
     Route::middleware('auth:sanctum')->group(function () {
 
-        // Gerenciamento de usuários e geladeiras
+        // Gerenciamento de Usuários e Geladeiras
         Route::apiResource('users', UserController::class);
         Route::apiResource('fridges', FridgeController::class);
 
@@ -26,29 +25,9 @@ Route::prefix('v1')->group(function () {
         Route::post('fridges/{id}/products', [FridgeController::class, 'addProduct']);
         Route::get('fridges/{id}/products',  [FridgeController::class, 'products']);
 
-        // Cadastro/edição do catálogo global
+        // Cadastro/Edição do catálogo global (Regra que você me explicou)
         Route::post('products', [ProductController::class, 'store']);
         Route::put('products/{id}', [ProductController::class, 'update']);
         Route::delete('products/{id}', [ProductController::class, 'destroy']);
     });
 });
-);
-=======
-Route::post('login', [AuthController::class, 'login']);
-
-Route::prefix('v1')->group(function () {
-    Route::apiResource('users', UserController::class);
-    Route::apiResource('fridges', FridgeController::class);
-    Route::post('fridges/{id}/products', [FridgeController::class, 'addProduct']);
-    Route::get('fridges/{id}/products',  [FridgeController::class, 'products']);
-
-    Route::get('products',          [ProductController::class, 'index']);
-    Route::get('products/{id}',     [ProductController::class, 'show']);
-    Route::put('products/{id}',     [ProductController::class, 'update']);
-    Route::delete('products/{id}',  [ProductController::class, 'destroy']);
-
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('products', [ProductController::class, 'store']);
-    });
-});
->>>>>>> 8d29fd5482700a7e1c275f86fce944dd4b94c509
