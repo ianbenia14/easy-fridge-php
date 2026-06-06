@@ -7,10 +7,13 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmailController;   
 
-// Rotas 100% Públicas (Qualquer um acessa)
-Route::post('login', [AuthController::class, 'login']);
+
 
 Route::prefix('v1')->group(function () {
+
+    // Rotas 100% Públicas (Qualquer um acessa)
+    Route::post('login', [AuthController::class, 'login']);
+    
     // Rotas de consulta pública (ex: ver o catálogo de produtos permitidos)
     Route::get('products',          [ProductController::class, 'index']);
     Route::get('products/{id}',     [ProductController::class, 'show']);
