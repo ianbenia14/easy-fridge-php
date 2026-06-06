@@ -30,10 +30,6 @@ class FridgeController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255', // pra poder dar nome a geladeira, Geladeira Cozinha, Geladeira Churrasco
-        ]);
-
         $data = $request->all();
         // id atribido ao token do sanctum, geladeira sempre associada ao usuario
         $data['user_id'] = $request->user()->id;
