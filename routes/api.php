@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\FridgeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EmailController;   
 
 // Rotas 100% Públicas (Qualquer um acessa)
 Route::post('login', [AuthController::class, 'login']);
@@ -29,5 +30,7 @@ Route::prefix('v1')->group(function () {
         Route::post('products', [ProductController::class, 'store']);
         Route::put('products/{id}', [ProductController::class, 'update']);
         Route::delete('products/{id}', [ProductController::class, 'destroy']);
+
+        Route::post('email/expiring-products', [EmailController::class, 'sendExpiringProducts']);
     });
 });

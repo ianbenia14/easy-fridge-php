@@ -81,21 +81,20 @@ class FridgeController extends Controller
     }
 
     public function addProduct(Request $request, int $id): JsonResponse
-    {
-        $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
-            'quantity'   => 'required|integer|min:1',
-        ]);
+{
+    $request->validate([
+        'product_id'      => 'required|integer|exists:products,id',
+        'quantity'        => 'required|integer|min:1',
+        'expiration_date' => 'required|date',
+    ]);
 
-        // verifica se o usuário é dono da geladeira antes de adicionar o produto
-        $userId = $request->user()->id;
+    $userId = $request->user()->id;
+    $product = $this->fridgeService->addProductSecure($id, $userId, $request->all());
 
-        $product = $this->fridgeService->addProductSecure($id, $userId, $request->all());
-
-        if (!$product) {
-            return response()->json(['message' => 'Não foi possível adicionar o item. Verifique as permissões da geladeira.'], 403);
-        }
-
-        return response()->json($product, 201);
+    if (!$product) {
+        return response()->json(['message' => 'Não foi possível adicionar o item. Verifique as permissões da geladeira.'], 403);
     }
+
+    return response()->json($product, 201);
+}
 }

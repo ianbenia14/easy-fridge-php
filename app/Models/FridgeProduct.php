@@ -12,6 +12,7 @@ class FridgeProduct extends Model
         'fridge_id',
         'product_id',
         'quantity',
+        'expiration_date',
     ];
 
     public function fridge()

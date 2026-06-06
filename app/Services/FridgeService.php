@@ -77,9 +77,10 @@ class FridgeService
         }
 
         $entry = FridgeProduct::create([
-            'fridge_id'  => $fridgeId,
-            'product_id' => $data['product_id'],
-            'quantity'   => $data['quantity'],
+                'fridge_id'       => $fridgeId,
+                'product_id'      => $data['product_id'],
+                'quantity'        => $data['quantity'],
+                'expiration_date' => $data['expiration_date'] ?? null,
         ]);
 
         // Disparo do e-mail
