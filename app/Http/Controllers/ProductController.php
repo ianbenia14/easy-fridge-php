@@ -34,6 +34,12 @@ class ProductController extends Controller
 
     public function update(Request $request, int $id): JsonResponse
     {
+        $request->validate([
+            'name'            => 'sometimes|string',
+            'quantity'        => 'sometimes|integer|min:1',
+            'expiration_date' => 'sometimes|date',
+        ]);
+        
         return response()->json($this->productService->update($id, $request->all()));
     }
 

@@ -34,6 +34,12 @@ class UserController extends Controller
 
     public function update(Request $request, int $id): JsonResponse
     {
+        $request->validate([
+            'name'     => 'sometimes|string',
+            'email'    => 'sometimes|email|unique:users,email,'.$id,
+            'password' => 'sometimes|string|min:6',
+        ]);
+        
         return response()->json($this->userService->update($id, $request->all()));
     }
 
