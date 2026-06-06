@@ -35,8 +35,12 @@ class UserService
 
     public function update(int $id, array $data): User
     {
+        if (isset($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
+        }
         $user = $this->getById($id);
         $user->update($data);
+
         return $user;
     }
 
