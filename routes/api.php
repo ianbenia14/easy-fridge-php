@@ -29,11 +29,12 @@ Route::prefix('v1')->group(function () {
         Route::post('fridges/{id}/products', [FridgeController::class, 'addProduct']);
         Route::get('fridges/{id}/products',  [FridgeController::class, 'products']);
 
-        // Cadastro/Edição do catálogo global (Regra que você me explicou)
+        // Cadastro/Edição do catálogo global
         Route::post('products', [ProductController::class, 'store']);
         Route::put('products/{id}', [ProductController::class, 'update']);
         Route::delete('products/{id}', [ProductController::class, 'destroy']);
 
+        Route::post('email/movement-report', [EmailController::class, 'sendMovementReport']);
         Route::post('email/expiring-products', [EmailController::class, 'sendExpiringProducts']);
     });
 });

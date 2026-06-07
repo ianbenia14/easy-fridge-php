@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Fridge;
 use App\Models\FridgeProduct;
 use App\Models\User;
+use App\Models\FridgeMovement;
 use App\Mail\ProductRemovedMail; // Sugestão: Ajustar o nome do e-mail de acordo com a ação
 use Illuminate\Support\Facades\Mail;
 
@@ -83,6 +84,14 @@ class FridgeService
                 'expiration_date' => $data['expiration_date'] ?? null,
         ]);
 
+        FridgeMovement::create([
+            'user_id'    => $userId,
+            'fridge_id'  => $fridgeId,
+            'product_id' => $data['product_id'],
+            'action'     => 'added',
+            'quantity'   => $data['quantity'],
+        ]);
+
         // Disparo do e-mail
         try {
             $user = User::find($userId); // id que já veio do Sanctum
@@ -99,4 +108,27 @@ class FridgeService
 
         return $entry;
     }
+
+    // BUSCA MOVIMENTAÇÕES DO USUÁRIO POR PERÍODO
+
+    public function getMovementsByUser(int $userId, string $period): array
+    {
+    $from = match($period) {
+        'daily'   => now()->startOfDay(),
+        'monthly' => now()->startOfMonth(),
+        default   => now()->startOfDay(),
+    };
+
+    return FridgeMovement::with('product')
+        ->where('user_id', $userId)
+        ->where('created_at', '>=', $from)
+        ->get()
+        ->map(fn($m) => [
+            'product_name' => $m->product->name,
+            'action'       => $m->action,
+            'quantity'     => $m->quantity,
+            'created_at'   => $m->created_at->format('d/m/Y H:i'),
+        ])
+        ->toArray();
+        }
 }

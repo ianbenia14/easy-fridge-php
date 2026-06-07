@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use App\Mail\ExpiringProductsMail;
 use App\Models\FridgeProduct;
 use Illuminate\Http\JsonResponse;
+use App\Mail\MovementReportMail;
+use App\Services\FridgeService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
@@ -40,5 +42,28 @@ class EmailController extends Controller
             'message'              => 'Email enviado com sucesso!',
             'produtos_encontrados' => count($products),
         ]);
+    }
+
+    public function sendMovementReport(Request $request): JsonResponse
+{
+    $request->validate([
+        'period' => 'required|in:daily,monthly',
+    ]);
+
+    $userId = $request->user()->id;
+    $movements = app(FridgeService::class)->getMovementsByUser($userId, $request->period);
+
+    if (empty($movements)) {
+        return response()->json([
+            'message' => 'Nenhuma movimentação encontrada no período.'
+        ]);
+    }
+
+    Mail::to($request->user()->email)->send(new MovementReportMail($movements));
+
+    return response()->json([
+        'message'                => 'Relatório enviado com sucesso!',
+        'movimentacoes_enviadas' => count($movements),
+    ]);
     }
 }
