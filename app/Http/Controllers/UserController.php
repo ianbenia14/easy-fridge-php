@@ -23,13 +23,18 @@ class UserController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
+            'name'     => 'required|string',
+            'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
-        ]);
+    ]);
 
-        $user = $this->userService->save($request->all());
-        return response()->json($user, 201);
+    $user = $this->userService->save($request->all());
+    $token = $user->createToken('api-token')->plainTextToken;
+
+    return response()->json([
+        'user'  => $user,
+        'token' => $token,
+    ], 201);
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -39,7 +44,7 @@ class UserController extends Controller
             'email'    => 'sometimes|email|unique:users,email,'.$id,
             'password' => 'sometimes|string|min:6',
         ]);
-        
+
         return response()->json($this->userService->update($id, $request->all()));
     }
 
