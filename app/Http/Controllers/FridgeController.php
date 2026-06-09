@@ -77,7 +77,7 @@ class FridgeController extends Controller
     }
 
     public function addProduct(Request $request, int $id): JsonResponse
-{
+    {
     $request->validate([
         'product_id'      => 'required|integer|exists:products,id',
         'quantity'        => 'required|integer|min:1',
@@ -92,5 +92,17 @@ class FridgeController extends Controller
     }
 
     return response()->json($product, 201);
-}
+    }
+
+    public function removeProduct(Request $request, int $fridgeId, int $productId): JsonResponse
+    {
+    $userId = auth()->id();
+    $removed = $this->fridgeService->removeProductSecure($fridgeId, $userId, $productId);
+
+    if (!$removed) {
+        return response()->json(['message' => 'Operação não autorizada'], 403);
+    }
+
+    return response()->json(null, 204);
+    }
 }

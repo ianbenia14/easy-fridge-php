@@ -4,10 +4,8 @@ namespace App\Services;
 
 use App\Models\Fridge;
 use App\Models\FridgeProduct;
-use App\Models\User;
 use App\Models\FridgeMovement;
-use App\Mail\ProductRemovedMail; // Sugestão: Ajustar o nome do e-mail de acordo com a ação
-use Illuminate\Support\Facades\Mail;
+use App\Models\User;
 
 class FridgeService
 {
@@ -78,10 +76,10 @@ class FridgeService
         }
 
         $entry = FridgeProduct::create([
-                'fridge_id'       => $fridgeId,
-                'product_id'      => $data['product_id'],
-                'quantity'        => $data['quantity'],
-                'expiration_date' => $data['expiration_date'] ?? null,
+            'fridge_id'       => $fridgeId,
+            'product_id'      => $data['product_id'],
+            'quantity'        => $data['quantity'],
+            'expiration_date' => $data['expiration_date'] ?? null,
         ]);
 
         FridgeMovement::create([
@@ -92,43 +90,53 @@ class FridgeService
             'quantity'   => $data['quantity'],
         ]);
 
-        // Disparo do e-mail
-        try {
-            $user = User::find($userId); // id que já veio do Sanctum
-            if ($user) {
-                $product = $entry->product;
-
-                Mail::to($user->email)->send(
-                    new ProductRemovedMail($product->name, $data['quantity'])
-                );
-            }
-        } catch (\Exception $e) {
-            \Log::error('Erro ao enviar e-mail: ' . $e->getMessage());
-        }
-
         return $entry;
     }
 
     // BUSCA MOVIMENTAÇÕES DO USUÁRIO POR PERÍODO
-
     public function getMovementsByUser(int $userId, string $period): array
     {
-    $from = match($period) {
-        'daily'   => now()->startOfDay(),
-        'monthly' => now()->startOfMonth(),
-        default   => now()->startOfDay(),
-    };
+        $from = match($period) {
+            'daily'   => now()->startOfDay(),
+            'monthly' => now()->startOfMonth(),
+            default   => now()->startOfDay(),
+        };
 
-    return FridgeMovement::with('product')
-        ->where('user_id', $userId)
-        ->where('created_at', '>=', $from)
-        ->get()
-        ->map(fn($m) => [
-            'product_name' => $m->product->name,
-            'action'       => $m->action,
-            'quantity'     => $m->quantity,
-            'created_at'   => $m->created_at->format('d/m/Y H:i'),
-        ])
-        ->toArray();
+        return FridgeMovement::with('product')
+            ->where('user_id', $userId)
+            ->where('created_at', '>=', $from)
+            ->get()
+            ->map(fn($m) => [
+                'product_name' => $m->product->name,
+                'action'       => $m->action,
+                'quantity'     => $m->quantity,
+                'created_at'   => $m->created_at->format('d/m/Y H:i'),
+            ])
+            ->toArray();
+    }
+
+    // REMOVER PRODUTO DA GELADEIRA DE FORMA SEGURA
+    public function removeProductSecure(int $fridgeId, int $userId, int $productId): bool
+    {
+        $fridge = $this->getByIdAndUser($fridgeId, $userId);
+
+        if (!$fridge) {
+            return false;
         }
+
+        FridgeProduct::where('fridge_id', $fridgeId)
+                     ->where('product_id', $productId)
+                     ->delete();
+
+        // Registra a movimentação
+        FridgeMovement::create([
+            'user_id'    => $userId,
+            'fridge_id'  => $fridgeId,
+            'product_id' => $productId,
+            'action'     => 'removed',
+            'quantity'   => 0,
+        ]);
+
+        return true;
+    }
 }

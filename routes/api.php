@@ -6,10 +6,11 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmailController;
 use Illuminate\Support\Facades\Route;
 
-// Rotas 100% Públicas (fora do prefix v1)
-Route::post('login', [AuthController::class, 'login']);
 
 Route::prefix('v1')->group(function () {
+    // Rotas 100% Públicas (fora do prefix v1)
+    Route::post('login', [AuthController::class, 'login']);
+
     // Rotas de consulta pública
     Route::get('products',          [ProductController::class, 'index']);
     Route::get('products/{id}',     [ProductController::class, 'show']);
@@ -22,8 +23,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('fridges', FridgeController::class);
 
         // Ações dentro da geladeira do usuário logado
-        Route::post('fridges/{id}/products', [FridgeController::class, 'addProduct']);
-        Route::get('fridges/{id}/products',  [FridgeController::class, 'products']);
+        Route::post('fridges/{id}/products',                            [FridgeController::class, 'addProduct']);
+        Route::get('fridges/{id}/products',                             [FridgeController::class, 'products']);
+        Route::delete('fridges/{fridgeId}/products/{productId}',        [FridgeController::class, 'removeProduct']);
 
         // Cadastro/Edição do catálogo global
         Route::post('products',         [ProductController::class, 'store']);

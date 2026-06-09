@@ -14,8 +14,7 @@ class EmailController extends Controller
     public function sendExpiringProducts(Request $request): JsonResponse
     {
         $request->validate([
-            'email' => 'required|email',
-            'days'  => 'integer|min:1',
+            'days' => 'integer|min:1',
         ]);
 
         $days = $request->days ?? 7;
@@ -36,7 +35,7 @@ class EmailController extends Controller
             ]);
         }
 
-        Mail::to($request->email)->send(new ExpiringProductsMail($products));
+        Mail::to($request->user()->email)->send(new ExpiringProductsMail($products));
 
         return response()->json([
             'message'              => 'Email enviado com sucesso!',
@@ -45,25 +44,25 @@ class EmailController extends Controller
     }
 
     public function sendMovementReport(Request $request): JsonResponse
-{
-    $request->validate([
-        'period' => 'required|in:daily,monthly',
-    ]);
-
-    $userId = $request->user()->id;
-    $movements = app(FridgeService::class)->getMovementsByUser($userId, $request->period);
-
-    if (empty($movements)) {
-        return response()->json([
-            'message' => 'Nenhuma movimentação encontrada no período.'
+    {
+        $request->validate([
+            'period' => 'required|in:daily,monthly',
         ]);
-    }
 
-    Mail::to($request->user()->email)->send(new MovementReportMail($movements));
+        $userId = $request->user()->id;
+        $movements = app(FridgeService::class)->getMovementsByUser($userId, $request->period);
 
-    return response()->json([
-        'message'                => 'Relatório enviado com sucesso!',
-        'movimentacoes_enviadas' => count($movements),
-    ]);
+        if (empty($movements)) {
+            return response()->json([
+                'message' => 'Nenhuma movimentação encontrada no período.'
+            ]);
+        }
+
+        Mail::to($request->user()->email)->send(new MovementReportMail($movements));
+
+        return response()->json([
+            'message'                => 'Relatório enviado com sucesso!',
+            'movimentacoes_enviadas' => count($movements),
+        ]);
     }
 }
